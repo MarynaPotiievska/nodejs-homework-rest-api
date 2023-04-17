@@ -22,4 +22,10 @@ router.put(
   ctrl.updateContact
 );
 
+router.patch(
+  "/:contactId",
+  validateBody(schemas.updateStatusContactSchema),
+  ctrl.updateStatusContact
+);
+
 module.exports = router;
