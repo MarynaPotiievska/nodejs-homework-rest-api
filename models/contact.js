@@ -28,6 +28,7 @@ const addContactSchema = Joi.object({
   phone: Joi.string()
     .pattern(/^\(?(\d{3})\)?\s?(\d{3})[- ]?(\d{4})$/)
     .required(),
+  favorite: Joi.boolean(),
 });
 
 const updateContactSchema = Joi.object({
@@ -36,7 +37,11 @@ const updateContactSchema = Joi.object({
   phone: Joi.string().pattern(/^\(?(\d{3})\)?\s?(\d{3})[- ]?(\d{4})$/),
 });
 
-const schemas = { addContactSchema, updateContactSchema };
+const updateStatusContact = Joi.object({
+  favorite: Joi.boolean().required(),
+});
+
+const schemas = { addContactSchema, updateContactSchema, updateStatusContact };
 
 const Contact = model("contact", contactSchema);
 
