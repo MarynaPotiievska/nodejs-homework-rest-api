@@ -7,8 +7,6 @@ const { SECRET_KEY } = process.env;
 
 const { User } = require("../models/user");
 
-// HttpError
-
 const { ctrlWrapper, HttpError } = require("../helpers");
 
 const register = async (req, res) => {
@@ -63,9 +61,23 @@ const current = async (req, res) => {
   });
 };
 
+const updateUserSub = async (req, res) => {
+  if (!req.body) {
+    throw HttpError(400, "Bad request");
+  }
+  const { subscription } = req.body;
+  const { _id, email } = req.user;
+  await User.findByIdAndUpdate(_id, { subscription });
+  res.json({
+    email,
+    subscription,
+  });
+};
+
 module.exports = {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   logout: ctrlWrapper(logout),
   current: ctrlWrapper(current),
+  updateUserSub: ctrlWrapper(updateUserSub),
 };
