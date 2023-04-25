@@ -3,25 +3,28 @@ const { HttpError, ctrlWrapper } = require("../helpers");
 
 const listContacts = async (req, res, next) => {
   const { _id: owner } = req.user;
-  const { page = 1, limit = 20, favorite = false } = req.query;
+  const { page = 1, limit = 20, favorite = null } = req.query;
+
   const skip = limit * (page - 1);
-  if (!favorite) {
-    const contactsList = await Contact.find({ owner }, "-owner", {
-      skip,
-      limit,
-    });
-    res.json(contactsList);
-    next();
-  }
-  const filteredContactsList = await Contact.find(
-    { owner, favorite },
-    "-owner",
-    {
-      skip,
-      limit,
-    }
-  );
-  res.json(filteredContactsList);
+  const query = {
+    owner,
+    favorite,
+  };
+  const isInQuery = (query) => {
+    return Object.entries(query).reduce((acc, [key, value]) => {
+      if (Boolean(value) === true) {
+        const mapping = { [key]: value };
+        return Object.assign(acc, mapping);
+      }
+      return acc;
+    }, {});
+  };
+
+  const contactsList = await Contact.find(isInQuery(query), "-owner", {
+    skip,
+    limit,
+  });
+  res.json(contactsList);
 };
 
 const getContactById = async (req, res) => {
