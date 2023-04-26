@@ -43,7 +43,7 @@ const loginSchema = Joi.object({
 const updateSubSchema = Joi.object({
   subscription: Joi.string()
     .required()
-    .validate(...subscriptionList),
+    .valid(...subscriptionList),
 });
 
 const schemas = { registerSchema, loginSchema, updateSubSchema };

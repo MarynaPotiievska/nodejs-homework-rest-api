@@ -63,11 +63,11 @@ const current = async (req, res) => {
 
 const updateUserSub = async (req, res) => {
   if (!req.body) {
-    throw HttpError(400, "Bad request");
+    throw HttpError(400);
   }
   const { subscription } = req.body;
   const { _id, email } = req.user;
-  await User.findByIdAndUpdate(_id, { subscription });
+  await User.findByIdAndUpdate(_id, req.body);
   res.json({
     email,
     subscription,
