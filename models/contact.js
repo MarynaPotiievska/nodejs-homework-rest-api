@@ -2,6 +2,7 @@ const { Schema, model } = require("mongoose");
 const Joi = require("joi");
 
 const { handleMongooseError } = require("../helpers");
+const phoneRegexp = /^\(?(\d{3})\)?\s?(\d{3})[- ]?(\d{4})$/;
 
 const contactSchema = new Schema({
   name: {
@@ -13,10 +14,15 @@ const contactSchema = new Schema({
   },
   phone: {
     type: String,
+    match: phoneRegexp,
   },
   favorite: {
     type: Boolean,
     default: false,
+  },
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: "user",
   },
 });
 
@@ -25,16 +31,14 @@ contactSchema.post("save", handleMongooseError);
 const addContactSchema = Joi.object({
   name: Joi.string().min(2).required(),
   email: Joi.string().email().required(),
-  phone: Joi.string()
-    .pattern(/^\(?(\d{3})\)?\s?(\d{3})[- ]?(\d{4})$/)
-    .required(),
+  phone: Joi.string().pattern(phoneRegexp).required(),
   favorite: Joi.boolean(),
 });
 
 const updateContactSchema = Joi.object({
   name: Joi.string().min(2),
   email: Joi.string().email(),
-  phone: Joi.string().pattern(/^\(?(\d{3})\)?\s?(\d{3})[- ]?(\d{4})$/),
+  phone: Joi.string().pattern(phoneRegexp),
 });
 
 const updateStatusContactSchema = Joi.object({
