@@ -14,7 +14,7 @@ router.post("/login", validateBody(schemas.loginSchema), ctrl.login);
 
 router.post("/logout", authenticate, ctrl.logout);
 
-router.get("/current", authenticate, upload.single("avatar"), ctrl.current);
+router.get("/current", authenticate, ctrl.current);
 
 router.patch(
   "/",
@@ -23,6 +23,11 @@ router.patch(
   ctrl.updateUserSub
 );
 
-router.patch("/avatars", authenticate, ctrl.updateAvatar);
+router.patch(
+  "/avatars",
+  authenticate,
+  upload.single("avatar"),
+  ctrl.updateAvatar
+);
 
 module.exports = router;
