@@ -34,7 +34,7 @@ describe("test login controller", () => {
     // console.log(response);
 
     expect(response.statusCode).toBe(200);
-    expect(response.text).toEqual(
+    expect(response.body).toEqual(
       expect.objectContaining({
         token: expect.any(String),
         user: expect.objectContaining({
@@ -43,8 +43,8 @@ describe("test login controller", () => {
         }),
       })
     );
-    expect(response.text).toHaveProperty("token");
-    expect(response.text.user).toHaveProperty("email");
-    expect(response.text.user).toHaveProperty("subscription");
+    expect(response.body).toHaveProperty("token");
+    expect(response.body.user).toHaveProperty("email");
+    expect(response.body.user).toHaveProperty("subscription");
   });
 });
