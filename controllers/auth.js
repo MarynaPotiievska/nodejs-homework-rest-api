@@ -1,5 +1,8 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const gravatar = require("gravatar");
+const path = require("path");
+const Jimp = require("jimp");
 
 require("dotenv").config();
 
@@ -16,7 +19,12 @@ const register = async (req, res) => {
     throw HttpError(409, "Email in use");
   }
   const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = await User.create({ ...req.body, password: hashedPassword });
+  const avatarURL = gravatar.url(email);
+  const newUser = await User.create({
+    ...req.body,
+    password: hashedPassword,
+    avatarURL,
+  });
   res.status(201).json({
     user: {
       email: newUser.email,
@@ -74,10 +82,27 @@ const updateUserSub = async (req, res) => {
   });
 };
 
+const updateAvatar = async (req, res) => {
+  const { _id } = req.user;
+  const { path: tempPath, originalname } = req.file;
+  const avatarsPath = path.join(__dirname, "../", "public", "avatars");
+  const img = async () => {
+    const image = await Jimp.read(tempPath);
+    await image.resize(250, 250);
+    return await image.write(path.join(avatarsPath, `${_id}_${originalname}`));
+  };
+  await img();
+
+  const avatarURL = path.join("avatars", `${_id}_${originalname}`);
+  await User.findByIdAndUpdate(_id, { avatarURL });
+  res.json({ avatarURL });
+};
+
 module.exports = {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   logout: ctrlWrapper(logout),
   current: ctrlWrapper(current),
   updateUserSub: ctrlWrapper(updateUserSub),
+  updateAvatar: ctrlWrapper(updateAvatar),
 };
