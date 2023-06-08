@@ -131,6 +131,9 @@ const updateUserSub = async (req, res) => {
 
 const updateAvatar = async (req, res) => {
   const { _id } = req.user;
+  if (!req.file) {
+    throw HttpError(400, "The file must be downloaded");
+  }
   const { path: tempPath, originalname } = req.file;
   const avatarsPath = path.join(__dirname, "../", "public", "avatars");
   const img = async () => {
